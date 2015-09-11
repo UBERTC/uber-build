@@ -229,13 +229,9 @@ AC_SUBST(host_baseargs)
 ENABLE_GRAPHITE=no
 AC_ARG_ENABLE([graphite],
               AC_HELP_STRING([--enable-graphite],
-                             [Enable Graphite optimization @<:@default=no@:>@]))
-graphite=yes
-if test x${enableval} != xyes; then
-  graphite=no
-fi
-if test "$GCC_MIN_VERSION_4_5_0" == "no"; then
-  graphite=no
+                             [Enable Graphite optimization @<:@default=yes@:>@]))
+if test x${enableval} != xno; then
+  graphite=yes
 fi
 ENABLE_GRAPHITE=$graphite
 AC_SUBST(ENABLE_GRAPHITE)
@@ -281,15 +277,15 @@ if test \( ! -d $srcdir/../$tool/$1 \) -a \( x"$version" != x"none"  \) ; then
   fi
 fi ])
 
-# binutils version (default is 2.17)
+# binutils version (default is uber)
 AC_MSG_CHECKING([target binutils version to build])
 AC_ARG_WITH([binutils-version],
   [  --with-binutils-version=VERSION
-                          use binutils-VERSION (default is 2.17)],
+                          use binutils-VERSION (default is uber)],
   [if test x"$withval" != x ; then
      BINUTILS_VERSION="$withval"
    fi],
-[BINUTILS_VERSION="2.17"])
+[BINUTILS_VERSION="uber"])
 AC_MSG_RESULT($BINUTILS_VERSION)
 AC_SUBST(BINUTILS_VERSION)
 ANDROID_CHECK_PACKAGE(binutils-${BINUTILS_VERSION})
@@ -312,186 +308,116 @@ if test x"$GOLD_VERSION" != x"$BINUTILS_VERSION" ; then
   ANDROID_CHECK_PACKAGE(binutils-${GOLD_VERSION})
 fi
 
-# gcc version (default is 4.2.1)
+# gcc version (default is UBER)
 AC_MSG_CHECKING([target gcc version to build])
 AC_ARG_WITH([gcc-version],
   [  --with-gcc-version=VERSION
-                          use gcc-VERSION (default is 4.2.1)],
+                          use gcc-VERSION (default is UBER)],
   [if test x"$withval" != x ; then
      GCC_VERSION="$withval"
    fi],
-[GCC_VERSION="4.2.1"])
+[GCC_VERSION="UBER"])
 AC_MSG_RESULT($GCC_VERSION)
 AC_SUBST(GCC_VERSION)
 ANDROID_CHECK_PACKAGE(gcc-${GCC_VERSION})
 
-# figure out if we need to build gmp and mpfr for gcc 4.3.0+ 
-gcc_version_file="${srcdir}/../gcc/gcc-${GCC_VERSION}/gcc/BASE-VER"
-if test -f "${gcc_version_file}"; then
-  GCC_MAJOR=`head -n 1 $gcc_version_file | sed  -e "s/[[^0-9]].*//"`
-  GCC_MINOR=`head -n 1 $gcc_version_file | \
-	    sed  -e "s/^[[0-9]]*\.//" -e "s/[[^0-9]].*//"`
-  if test "$GCC_MAJOR" -gt 4 -o \
-          \( "$GCC_MAJOR" -eq 4 -a "$GCC_MINOR" -ge 3 \) ; then
-    GCC_MIN_VERSION_4_3_0="yes"
-  else
-    GCC_MIN_VERSION_4_3_0="no"
-  fi
-  if test "$GCC_MAJOR" -gt 4 -o \
-              \( "$GCC_MAJOR" -eq 4 -a "$GCC_MINOR" -ge 5 \) ; then
-    GCC_MIN_VERSION_4_5_0="yes"
-  else
-    GCC_MIN_VERSION_4_5_0="no"
-  fi
-  if test "$GCC_MAJOR" -gt 4 -o \
-              \( "$GCC_MAJOR" -eq 4 -a "$GCC_MINOR" -ge 8 \) ; then
-    GCC_MIN_VERSION_4_8_0="yes"
-  else
-    GCC_MIN_VERSION_4_8_0="no"
-  fi
-else
-  # No version file, assume it is trunk
-  GCC_MIN_VERSION_4_3_0="yes"
-  GCC_MIN_VERSION_4_5_0="yes"
-  GCC_MIN_VERSION_4_8_0="yes"
-fi
-AC_SUBST(GCC_MIN_VERSION_4_3_0)
-AC_SUBST(GCC_MIN_VERSION_4_5_0)
-AC_SUBST(GCC_MIN_VERSION_4_8_0)
 
-# newlib version (default is 1.16.0)
+# newlib version (default is uber)
 # newlib is only used for arm-newlib-eabi for testing
 if test x$target == xarm-newlib-elf ; then 
 AC_MSG_CHECKING([target newlib version to build])
 AC_ARG_WITH([newlib-version],
   [  --with-newlib-version=VERSION
-                          use newlib-VERSION (default is 1.16.0)],
+                          use newlib-VERSION (default is uber)],
   [if test x"$withval" != x ; then
      NEWLIB_VERSION="$withval"
    fi],
-[NEWLIB_VERSION="1.16.0"])
+[NEWLIB_VERSION="uber"])
 AC_MSG_RESULT($NEWLIB_VERSION)
 AC_SUBST(NEWLIB_VERSION)
 ANDROID_CHECK_PACKAGE(newlib-${NEWLIB_VERSION})
 fi
 
-if test "$GCC_MIN_VERSION_4_3_0" == "yes"; then
-# gmp version (default is 4.2.2)
-# gmp is only used for gcc version higher than 4.3.0
+# gmp version (default is uber)
 AC_MSG_CHECKING([gmp version])
 AC_ARG_WITH([gmp-version],
   [  --with-gmp-version=VERSION
-                          use gmp-VERSION (default is 4.2.2)],
+                          use gmp-VERSION (default is uber)],
   [if test x"$withval" != x ; then
      GMP_VERSION="$withval"
    fi],
-[GMP_VERSION="4.2.2"])
+[GMP_VERSION="uber"])
 AC_MSG_RESULT($GMP_VERSION)
 ANDROID_CHECK_PACKAGE(gmp-${GMP_VERSION})
 
-# mpfr version (default is 2.3.0)
-# mpfr is only used for gcc version higher than 4.3.0
+# mpfr version (default is uber)
 AC_MSG_CHECKING([mpfr version])
 AC_ARG_WITH([mpfr-version],
   [  --with-mpfr-version=VERSION
-                          use mpfr-VERSION (default is 2.3.0)],
+                          use mpfr-VERSION (default is uber)],
   [if test x"$withval" != x ; then
      MPFR_VERSION="$withval"
    fi],
-[MPFR_VERSION="2.3.0"])
+[MPFR_VERSION="uber"])
 AC_MSG_RESULT($MPFR_VERSION)
 ANDROID_CHECK_PACKAGE(mpfr-${MPFR_VERSION})
 
-fi
 AC_SUBST(GMP_VERSION)
 AC_SUBST(MPFR_VERSION)
 
-if test "$GCC_MIN_VERSION_4_5_0" == "yes"; then
-# mpc version (default is 0.8.1)
-# mpc is only used for gcc version higher than 4.5.0
+# mpc version (default is uber)
 AC_MSG_CHECKING([mpc version])
 AC_ARG_WITH([mpc-version],
   [  --with-mpc-version=VERSION
-                          use mpc-VERSION (default is 0.8.1)],
+                          use mpc-VERSION (default is uber)],
   [if test x"$withval" != x; then
      MPC_VERSION="$withval"
    fi],
-[MPC_VERSION="0.8.1"])
+[MPC_VERSION="uber"])
 AC_MSG_RESULT($MPC_VERSION)
 ANDROID_CHECK_PACKAGE(mpc-${MPC_VERSION})
-fi
 AC_SUBST(MPC_VERSION)
 
 if test "$ENABLE_GRAPHITE" == "yes"; then
-# ppl version (default is 0.11.2)
-# ppl is only used for gcc 4.5 and 4.6 with graphite optimization.
-AC_MSG_CHECKING([ppl version])
-AC_ARG_WITH([ppl-version],
-  [  --with-ppl-version=VERSION
-                         use ppl-VERSION (default is 0.11.2)],
-  [if test x"$withval" != x ; then
-     PPL_VERSION="$withval"
-   fi],
-[PPL_VERSION="0.11.2"])
-AC_MSG_RESULT($PPL_VERSION)
-ANDROID_CHECK_PACKAGE(ppl-${PPL_VERSION})
-fi
-AC_SUBST(PPL_VERSION)
-
-if test "$ENABLE_GRAPHITE" == "yes"; then
-# cloog-ppl or cloog version (default is 0.15.9)
-# cloog is only used for gcc 4.5+ with graphite optimization.
 AC_MSG_CHECKING([cloog version])
 AC_ARG_WITH([cloog-version],
   [  --with-cloog-version=VERSION
-                           use cloog-VERSION (default is 0.15.9)],
+                           use cloog-VERSION (default is uber)],
   [if test x"$withval" != x ; then
      CLOOG_VERSION="$withval"
    fi],
-[CLOOG_VERSION="0.15.9"])
+[CLOOG_VERSION="uber"])
 AC_MSG_RESULT($CLOOG_VERSION)
-case $CLOOG_VERSION in
-  0.15*)
-    # CLooG/PPL relies on the PPL for version 0.15.x
-    CLOOG_VERSION="ppl-$CLOOG_VERSION"
-    ;;
-  0.16*|0.17*|0.18*)
-    # CLooG 0.16+ has its own embedded polyhedral library
-    CLOOG_BACKEND="--enable-cloog-backend=isl"
-    ;;
-  *)
-    AC_MSG_ERROR(Unsupported cloog version);
-esac
+CLOOG_BACKEND="--enable-cloog-backend=isl"
 AC_SUBST(CLOOG_BACKEND)
 ANDROID_CHECK_PACKAGE(cloog-${CLOOG_VERSION})
 fi
 AC_SUBST(CLOOG_VERSION)
 
 if test "$ENABLE_GRAPHITE" == "yes"; then
-# isl version (default is 0.11.1)
-# isl is only used for gcc 4.8+ with graphite optimization.
+# isl version (default is uber)
 AC_MSG_CHECKING([isl version])
 AC_ARG_WITH([isl-version],
   [  --with-isl-version=VERSION
-                         use isl-VERSION (default is 0.11.1)],
+                         use isl-VERSION (default is uber)],
   [if test x"$withval" != x ; then
      ISL_VERSION="$withval"
    fi],
-[ISL_VERSION="0.11.1"])
+[ISL_VERSION="uber"])
 AC_MSG_RESULT($ISL_VERSION)
 ANDROID_CHECK_PACKAGE(isl-${ISL_VERSION})
 fi
 AC_SUBST(ISL_VERSION)
 
-# gdb version (default is 6.6)
+# gdb version (default is uber)
 AC_MSG_CHECKING([target gdb version to build])
 AC_ARG_WITH([gdb-version],
   [  --with-gdb-version=VERSION
-                          use gdb-VERSION (default is 6.6)],
+                          use gdb-VERSION (default is uber)],
   [if test x"$withval" != x ; then
      GDB_VERSION="$withval"
    fi],
-[GDB_VERSION="6.6"])
+[GDB_VERSION="uber"])
 AC_MSG_RESULT($GDB_VERSION)
 AC_SUBST(GDB_VERSION)
 ANDROID_CHECK_PACKAGE(gdb-${GDB_VERSION})
