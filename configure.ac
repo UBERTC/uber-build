@@ -26,7 +26,6 @@ AC_PROG_INSTALL
 # 2. arm-eabi (for Android kernel)
 # 3. arm-newlib-eabi (for gcc testing)
 # 4. i[3456]86-*-linux-gnu, x86-*-linux-gnu, i[3456]86-*-linux-android, x86-*-linux-android (for x86 targets)
-# 5. mips*-*-linux* (for mips targets)
 
 GDB_TARGET=$target
 case $target in
@@ -44,11 +43,9 @@ case $target in
   i[[3456]]86-*-linux-gnu | x86_64-*-linux-gnu | i[[3456]]86-*-linux-android | x86_64-*-linux-android)
     BUILD_ANDROID_GCC=yes
     ;;
-  mips*-*-linux*)
-    BUILD_ANDROID_GCC=yes
-    ;;
   *)
-    AC_MSG_ERROR(Unsupported target $target.);
+    AC_MSG_ERROR(Unsupported target $target.)
+    ;;
 esac
 AC_SUBST(BUILD_ANDROID_GCC)
 AC_SUBST(GDB_TARGET)
