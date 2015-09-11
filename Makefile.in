@@ -360,16 +360,9 @@ config-target-gcc: stmp-config-target-gcc
 
 GCC_CONFIG_ARGS=--prefix=$(prefix) \
 	  --target=${cur_target} --host=${cur_host} --build=${cur_build} \
-	  --with-gnu-as --with-gnu-ld --enable-languages=c,c++
-
-# For gcc versions 4.3.0 and later, gmp and mpfr are required.
-# Also build libgcc is a seperate sub-target in 4.3.0+.
-stmp-config-target-gcc: stmp-install-host-gmp stmp-install-host-mpfr
-GCC_CONFIG_ARGS += --with-gmp=$(GMP_DIR) --with-mpfr=$(MPFR_DIR)
-
-# For gcc versions 4.5.0 and higher, mpc is required.
-stmp-config-target-gcc: stmp-install-host-mpc
-GCC_CONFIG_ARGS += --with-mpc=$(MPC_DIR)
+	  --with-gnu-as --with-gnu-ld --enable-languages=c,c++ \
+	  --with-gmp=$(GMP_DIR) --with-mpfr=$(MPFR_DIR) \
+	  --with-mpc=$(MPC_DIR)
 
 # For gcc 4.8+ with graphite optimization, cloog and isl are required.
 ifeq ($(ENABLE_GRAPHITE),yes)
