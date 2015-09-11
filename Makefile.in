@@ -384,7 +384,7 @@ GCC_CONFIG_ARGS += --enable-version-specific-runtime-libs \
 	--disable-werror --disable-libssp  --disable-plugin \
 	--disable-sjlj-exceptions 
 
-ifneq ($(target_os),linux-gnu)
+ifneq ($(target_os),x86_64)
 GCC_CONFIG_ARGS += --disable-libstdc__-v3
 endif
 
