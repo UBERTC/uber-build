@@ -253,15 +253,22 @@ AC_SUBST(package_to_srcdir)
 # macro to check that we have a package. A package x exists if any one
 # of the following exists (x is in the format of "tool-version"):
 # 1. tool/x
-# 2. tool/x.tar.gz
-# 3. tool/x.tgz
-# 4. tool/x.tar.bz2
+# 2. tool/x.tar
+# 3. tool/x.tar.xz
+# 4. tool/x.txz
+# 5. tool/x.tar.gz
+# 6. tool/x.tgz
+# 7. tool/x.tar.bz2
 m4_pattern_allow([^AC_MSG_ERROR$])
 AC_DEFUN([ANDROID_CHECK_PACKAGE],
 [x=$1; tool=$(echo "$x" | sed -e 's/-.*//'); version=$(echo "$x" | sed -e 's/[[^-]]*-//'); \
 if test \( ! -d $srcdir/../$tool/$1 \) -a \( x"$version" != x"none"  \) ; then
   if test -f $srcdir/../$tool/$1.tar ; then
     mkdir -p temp-src && tar -C temp-src -xf $srcdir/../$tool/$1.tar
+  elif test -f $srcdir/../$tool/$1.tar.xz ; then
+    mkdir -p temp-src && tar -C temp-src -xf $srcdir/../$tool/$1.tar.xz
+  elif test -f $srcdir/../$tool/$1.txz ; then
+    mkdir -p temp-src && tar -C temp-src -xf $srcdir/../$tool/$1.txz
   elif test -f $srcdir/../$tool/$1.tar.gz ; then
     mkdir -p temp-src && tar -C temp-src -xzf $srcdir/../$tool/$1.tar.gz
   elif test -f $srcdir/../$tool/$1.tgz ; then
@@ -270,6 +277,10 @@ if test \( ! -d $srcdir/../$tool/$1 \) -a \( x"$version" != x"none"  \) ; then
     mkdir -p temp-src && tar -C temp-src -xjf $srcdir/../$tool/$1.tar.bz2
   elif test -f $srcdir/../tarballs/$1.tar ; then
     mkdir -p temp-src && tar -C temp-src -xf $srcdir/../tarballs/$1.tar
+  elif test -f $srcdir/../tarballs/$1.tar.xz ; then
+    mkdir -p temp-src && tar -C temp-src -xf $srcdir/../tarballs/$1.tar.xz
+  elif test -f $srcdir/../tarballs/$1.txz ; then
+    mkdir -p temp-src && tar -C temp-src -xf $srcdir/../tarballs/$1.txz
   elif test -f $srcdir/../tarballs/$1.tar.gz ; then
     mkdir -p temp-src && tar -C temp-src -xzf $srcdir/../tarballs/$1.tar.gz
   elif test -f $srcdir/../tarballs/$1.tgz ; then
