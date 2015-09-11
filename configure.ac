@@ -294,32 +294,6 @@ AC_MSG_RESULT($BINUTILS_VERSION)
 AC_SUBST(BINUTILS_VERSION)
 ANDROID_CHECK_PACKAGE(binutils-${BINUTILS_VERSION})
 
-m4_pattern_allow(AM_INIT_AUTOMAKE)
-# macro to find binutils version for dual linker support.
-# For binutils-2.21 and up, add --enable-gold=default,
-# else add --enable-gold=both/gold.
-AC_DEFUN([FIND_BINUTILS_VERSION],
-[binutils_version_file="${srcdir}/../binutils/$1/bfd/configure.in"
-if test -f "${binutils_version_file}"; then
-  binutils_version_num=`grep AM_INIT_AUTOMAKE ${binutils_version_file} | \
-                        sed -n "s/[AM_INIT_AUTOMAKE][[^,]]*,*\([[^)]]*\))/\1/p"`
-  BINUTILS_MAJOR=`echo $binutils_version_num | sed -e "s/[[^0-9]].*//"`
-  BINUTILS_MINOR=`echo $binutils_version_num | \
-                  sed  -e "s/^[[0-9]]*\.//" -e "s/[[^0-9]].*//"`
-  if test "$BINUTILS_MAJOR" -gt 2 -o \
-          \( "$BINUTILS_MAJOR" -eq 2 -a "$BINUTILS_MINOR" -ge 21 \); then
-    $2_MIN_VERSION_2_21="yes"
-  else
-    $2_MIN_VERSION_2_21="no"
-  fi
-else
-  # No configure file found. assume yes.
-  $2_MIN_VERSION_2_21="yes"
-fi ])
-
-FIND_BINUTILS_VERSION(binutils-${BINUTILS_VERSION},[BINUTILS])
-AC_SUBST(BINUTILS_MIN_VERSION_2_21)
-
 # gold binutils version (default is the same version as the main
 # binutils package).
 GOLD_VERSION="$BINUTILS_VERSION"
@@ -334,12 +308,9 @@ AC_MSG_RESULT($GOLD_VERSION)
 AC_SUBST(GOLD_VERSION)
 
 # Skip check if we are using the main binutils for gold.
-GOLD_MIN_VERSION_2_21="$BINUTILS_MIN_VERSION_2_21"
 if test x"$GOLD_VERSION" != x"$BINUTILS_VERSION" ; then
   ANDROID_CHECK_PACKAGE(binutils-${GOLD_VERSION})
-  FIND_BINUTILS_VERSION(binutils-${GOLD_VERSION},[GOLD])
 fi
-AC_SUBST(GOLD_MIN_VERSION_2_21)
 
 # gcc version (default is 4.2.1)
 AC_MSG_CHECKING([target gcc version to build])
