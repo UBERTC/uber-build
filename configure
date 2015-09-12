@@ -590,7 +590,6 @@ have_mpfr
 have_mpc
 sysroot
 WITH_PYTHON
-GDB_VERSION
 ISL_VERSION
 CLOOG_VERSION
 CLOOG_BACKEND
@@ -608,8 +607,6 @@ enable_ld_default
 enable_gold
 baseargs
 TOPLEVEL_CONFIGURE_ARGUMENTS
-GDB_TARGET
-BUILD_ANDROID_GCC
 INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
@@ -676,7 +673,6 @@ with_mpfr_version
 with_mpc_version
 with_cloog_version
 with_isl_version
-with_gdb_version
 with_python
 with_sysroot
 with_mpc
@@ -1285,11 +1281,6 @@ _ACEOF
 
   cat <<\_ACEOF
 
-Program names:
-  --program-prefix=PREFIX            prepend PREFIX to installed program names
-  --program-suffix=SUFFIX            append SUFFIX to installed program names
-  --program-transform-name=PROGRAM   run sed PROGRAM on installed program names
-
 System types:
   --build=BUILD     configure for building on BUILD [guessed]
   --host=HOST       cross-compile to build programs to run on HOST [BUILD]
@@ -1330,8 +1321,6 @@ Optional Packages:
                            use cloog-VERSION (default is uber)
   --with-isl-version=VERSION
                          use isl-VERSION (default is uber)
-  --with-gdb-version=VERSION
-                          use gdb-VERSION (default is uber)
   --with-python=WITH_PYTHON
                           use python WITH_PYTHON)
   --with-sysroot=DIR
@@ -2016,45 +2005,6 @@ test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
 test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
 
-# We only allow the following 3 targets:
-# 1. arm-linux-androideabi (primary target)
-# 2. arm-eabi (for Android kernel)
-# 3. arm-newlib-eabi (for gcc testing)
-# 4. i[3456]86-*-linux-gnu, x86-*-linux-gnu, i[3456]86-*-linux-android, x86-*-linux-android (for x86 targets)
-
-GDB_TARGET=$target
-case $target in
-  arm-unknown-linux-androideabi | arm-unknown-eabi)
-    BUILD_ANDROID_GCC=yes
-    GDB_TARGET=arm-elf-linux
-    ;;
-  aarch64-linux-android | aarch64-unknown-linux-android | aarch64-linux-gnu | aarch64-unknown-linux-gnu | aarch64-linux | aarch64-unknown-linux | aarch64-none | aarch64-unknown-none)
-    BUILD_ANDROID_GCC=yes
-    GDB_TARGET=aarch64-elf-linux-android
-    ;;
-  arm-newlib-elf)
-    BUILD_ANDROID_GCC=no
-    ;;
-  i[3456]86-*-linux-gnu | x86_64-*-linux-gnu | i[3456]86-*-linux-android | x86_64-*-linux-android)
-    BUILD_ANDROID_GCC=yes
-    ;;
-  *)
-    as_fn_error $? "Unsupported target $target." "$LINENO" 5
-    ;;
-esac
-
-
-test "$program_prefix" != NONE &&
-  program_transform_name="s&^&$program_prefix&;$program_transform_name"
-# Use a double $ so make ignores it.
-test "$program_suffix" != NONE &&
-  program_transform_name="s&\$&$program_suffix&;$program_transform_name"
-# Double any \ or $.
-# By default was `s,x,x', remove it if useless.
-ac_script='s/[\\$]/&&/g;s/;s,x,x,$//'
-program_transform_name=`$as_echo "$program_transform_name" | sed "$ac_script"`
-
-
 # TOPLEVEL_CONFIGURE_ARGUMENTS lifted from top-level configure.ac in gcc.
 
 # Export original configure arguments for use by sub-configures.
@@ -2702,53 +2652,6 @@ fi
 fi
 
 
-# gdb version (default is uber)
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking target gdb version to build" >&5
-$as_echo_n "checking target gdb version to build... " >&6; }
-
-# Check whether --with-gdb-version was given.
-if test "${with_gdb_version+set}" = set; then :
-  withval=$with_gdb_version; if test x"$withval" != x ; then
-     GDB_VERSION="$withval"
-   fi
-else
-  GDB_VERSION="uber"
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $GDB_VERSION" >&5
-$as_echo "$GDB_VERSION" >&6; }
-
-x=gdb-${GDB_VERSION}; tool=$(echo "$x" | sed -e 's/-.*//'); version=$(echo "$x" | sed -e 's/[^-]*-//'); \
-if test \( ! -d $srcdir/../$tool/gdb-${GDB_VERSION} \) -a \( x"$version" != x"none"  \) ; then
-  if test -f $srcdir/../$tool/gdb-${GDB_VERSION}.tar ; then
-    mkdir -p temp-src && tar -C temp-src -xf $srcdir/../$tool/gdb-${GDB_VERSION}.tar
-  elif test -f $srcdir/../$tool/gdb-${GDB_VERSION}.tar.xz ; then
-    mkdir -p temp-src && tar -C temp-src -xf $srcdir/../$tool/gdb-${GDB_VERSION}.tar.xz
-  elif test -f $srcdir/../$tool/gdb-${GDB_VERSION}.txz ; then
-    mkdir -p temp-src && tar -C temp-src -xf $srcdir/../$tool/gdb-${GDB_VERSION}.txz
-  elif test -f $srcdir/../$tool/gdb-${GDB_VERSION}.tar.gz ; then
-    mkdir -p temp-src && tar -C temp-src -xzf $srcdir/../$tool/gdb-${GDB_VERSION}.tar.gz
-  elif test -f $srcdir/../$tool/gdb-${GDB_VERSION}.tgz ; then
-    mkdir -p temp-src && tar -C temp-src -xzf $srcdir/../$tool/gdb-${GDB_VERSION}.tgz
-  elif test -f $srcdir/../$tool/gdb-${GDB_VERSION}.tar.bz2 ; then
-    mkdir -p temp-src && tar -C temp-src -xjf $srcdir/../$tool/gdb-${GDB_VERSION}.tar.bz2
-  elif test -f $srcdir/../tarballs/gdb-${GDB_VERSION}.tar ; then
-    mkdir -p temp-src && tar -C temp-src -xf $srcdir/../tarballs/gdb-${GDB_VERSION}.tar
-  elif test -f $srcdir/../tarballs/gdb-${GDB_VERSION}.tar.xz ; then
-    mkdir -p temp-src && tar -C temp-src -xf $srcdir/../tarballs/gdb-${GDB_VERSION}.tar.xz
-  elif test -f $srcdir/../tarballs/gdb-${GDB_VERSION}.txz ; then
-    mkdir -p temp-src && tar -C temp-src -xf $srcdir/../tarballs/gdb-${GDB_VERSION}.txz
-  elif test -f $srcdir/../tarballs/gdb-${GDB_VERSION}.tar.gz ; then
-    mkdir -p temp-src && tar -C temp-src -xzf $srcdir/../tarballs/gdb-${GDB_VERSION}.tar.gz
-  elif test -f $srcdir/../tarballs/gdb-${GDB_VERSION}.tgz ; then
-    mkdir -p temp-src && tar -C temp-src -xzf $srcdir/../tarballs/gdb-${GDB_VERSION}.tgz
-  elif test -f $srcdir/../tarballs/gdb-${GDB_VERSION}.tar.bz2 ; then
-    mkdir -p temp-src && tar -C temp-src -xjf $srcdir/../tarballs/gdb-${GDB_VERSION}.tar.bz2
-  else
-    as_fn_error $? "'package gdb-${GDB_VERSION} does not exist.'" "$LINENO" 5
-  fi
-fi
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking with python" >&5
 $as_echo_n "checking with python... " >&6; }
 
@@ -2764,16 +2667,6 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $WITH_PYTHON" >&5
 $as_echo "$WITH_PYTHON" >&6; }
 
-
-# For certain targets, with gdb 7.2+, the proper gdb target is
-# arm-linux-android.
-case $target in
-  arm-unknown-linux-androideabi | arm-unknown-eabi)
-    GDB_TARGET=arm-linux-android
-    ;;
-    *)
-    ;;
-esac
 
 # Sysroot location
 

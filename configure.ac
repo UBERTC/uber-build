@@ -21,36 +21,6 @@ AC_CANONICAL_SYSTEM
 # Get 'install' or 'install-sh' and its variants.
 AC_PROG_INSTALL
 
-# We only allow the following 3 targets:
-# 1. arm-linux-androideabi (primary target)
-# 2. arm-eabi (for Android kernel)
-# 3. arm-newlib-eabi (for gcc testing)
-# 4. i[3456]86-*-linux-gnu, x86-*-linux-gnu, i[3456]86-*-linux-android, x86-*-linux-android (for x86 targets)
-
-GDB_TARGET=$target
-case $target in
-  arm-unknown-linux-androideabi | arm-unknown-eabi)
-    BUILD_ANDROID_GCC=yes
-    GDB_TARGET=arm-elf-linux
-    ;;
-  aarch64-linux-android | aarch64-unknown-linux-android | aarch64-linux-gnu | aarch64-unknown-linux-gnu | aarch64-linux | aarch64-unknown-linux | aarch64-none | aarch64-unknown-none)
-    BUILD_ANDROID_GCC=yes
-    GDB_TARGET=aarch64-elf-linux-android
-    ;;
-  arm-newlib-elf)
-    BUILD_ANDROID_GCC=no
-    ;;
-  i[[3456]]86-*-linux-gnu | x86_64-*-linux-gnu | i[[3456]]86-*-linux-android | x86_64-*-linux-android)
-    BUILD_ANDROID_GCC=yes
-    ;;
-  *)
-    AC_MSG_ERROR(Unsupported target $target.)
-    ;;
-esac
-AC_SUBST(BUILD_ANDROID_GCC)
-AC_SUBST(GDB_TARGET)
-AC_ARG_PROGRAM
-
 # TOPLEVEL_CONFIGURE_ARGUMENTS lifted from top-level configure.ac in gcc.
 
 # Export original configure arguments for use by sub-configures.
@@ -421,19 +391,6 @@ ANDROID_CHECK_PACKAGE(isl-${ISL_VERSION})
 fi
 AC_SUBST(ISL_VERSION)
 
-# gdb version (default is uber)
-AC_MSG_CHECKING([target gdb version to build])
-AC_ARG_WITH([gdb-version],
-  [  --with-gdb-version=VERSION
-                          use gdb-VERSION (default is uber)],
-  [if test x"$withval" != x ; then
-     GDB_VERSION="$withval"
-   fi],
-[GDB_VERSION="uber"])
-AC_MSG_RESULT($GDB_VERSION)
-AC_SUBST(GDB_VERSION)
-ANDROID_CHECK_PACKAGE(gdb-${GDB_VERSION})
-
 AC_MSG_CHECKING([with python])
 AC_ARG_WITH([python],
   [  --with-python=WITH_PYTHON
@@ -444,16 +401,6 @@ AC_ARG_WITH([python],
 [WITH_PYTHON=""])
 AC_MSG_RESULT($WITH_PYTHON)
 AC_SUBST(WITH_PYTHON)
-
-# For certain targets, with gdb 7.2+, the proper gdb target is 
-# arm-linux-android.
-case $target in
-  arm-unknown-linux-androideabi | arm-unknown-eabi)
-    GDB_TARGET=arm-linux-android
-    ;;
-    *)
-    ;;
-esac
 
 # Sysroot location
 AC_ARG_WITH([sysroot],

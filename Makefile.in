@@ -59,7 +59,6 @@ CLOOG_BACKEND:=@CLOOG_BACKEND@
 ENABLE_GRAPHITE:=@ENABLE_GRAPHITE@
 PACKAGE_TO_SRCDIR:=@package_to_srcdir@
 BUILD_ANDROID_GCC:=@BUILD_ANDROID_GCC@
-GDB_TARGET:=@GDB_TARGET@
 
 # We need to figure out how to get to top level source directory from
 # a package build directory. 
@@ -75,7 +74,6 @@ MPFR_VERSION=mpfr-@MPFR_VERSION@
 MPC_VERSION=mpc-@MPC_VERSION@
 CLOOG_VERSION=cloog-@CLOOG_VERSION@
 ISL_VERSION=isl-@ISL_VERSION@
-GDB_VERSION=gdb-@GDB_VERSION@
 WITH_PYTHON=@WITH_PYTHON@
 HAVE_MPC=@have_mpc@
 HAVE_MPFR=@have_mpfr@
@@ -219,11 +217,9 @@ all: build
 ifeq ($(ENABLE_GRAPHITE),yes)
 build: install-host-cloog
 endif
-build: build-target-binutils build-target-gcc \
-	build-target-gdb
+build: build-target-binutils build-target-gcc
 
-install: install-target-binutils install-target-gcc \
-	install-target-gdb
+install: install-target-binutils install-target-gcc
 
 # To support canadian cross build we need to build build->target toolchain
 # as well as final host->target toolchain.
@@ -236,7 +232,7 @@ stmp-config-canadian-tools:
 	  mkdir $(CANADIAN_ROOT)) && \
 	($(canadian_build_env) \
 	 cd $(CANADIAN_ROOT) && \
-	 $(abs_srcdir)/configure $(baseargs) --with-gdb-version=none --build=$(cur_build) \
+	 $(abs_srcdir)/configure $(baseargs) --build=$(cur_build) \
 		--host=$(cur_build) --target=$(cur_target) --prefix=$(CANADIAN_ROOT)/install) && \
 	$(STAMP) $@
 
@@ -641,37 +637,6 @@ stmp-install-host-cloog:
 	$(STAMP) $@
 endif
 install-host-cloog: stmp-install-host-cloog
-
-
-# target gdb rules
-.PHONY: config-target-gdb build-target-gdb install-target-gdb
-ifeq ($(GDB_VERSION),gdb-none)
-config-target-gdb:
-build-target-gdb:
-install-target-gdb:
-else
-config-target-gdb: stmp-config-target-gdb
-
-GDB_CONFIG_ARGS=$(host_baseargs) --prefix=$(prefix) \
-	--target=$(GDB_TARGET) --host=${cur_host} --build=${cur_build} \
-	$(WITH_PYTHON) --disable-nls -disable-shared --disable-werror
-
-stmp-config-target-gdb: config.status $(canadian_stmp)
-	([ -d ${GDB_VERSION} ] || \
-	  mkdir ${GDB_VERSION}) && \
-	($(canadian_env) \
-	 cd ${GDB_VERSION} ; \
-	 $(call find-package-srcdir, ${GDB_VERSION})/configure \
-	  $(GDB_CONFIG_ARGS)) && \
-	$(STAMP) $@
-build-target-gdb: stmp-build-target-gdb
-stmp-build-target-gdb: stmp-config-target-gdb install-target-binutils
-	($(canadian_env) \
-	 $(MAKE) -C ${GDB_VERSION}) && $(STAMP) $@
-install-target-gdb: stmp-build-target-gdb
-	($(canadian_env) \
-	 $(MAKE) -C ${GDB_VERSION} install)
-endif
 
 # clean rules
 .PHONY: clean
