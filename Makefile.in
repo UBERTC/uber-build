@@ -381,7 +381,7 @@ GCC_CONFIG_ARGS += --enable-version-specific-runtime-libs \
 	--disable-sjlj-exceptions --disable-host-shared
 
 ifneq ($(target_os),x86_64)
-GCC_CONFIG_ARGS += --disable-libstdc__-v3
+GCC_CONFIG_ARGS += --disable-libstdc__-v3 --enable-eh-frame-hdr-for-static
 CFLAGS_FOR_TARGET+= -fno-short-enums
 CXXFLAGS_FOR_TARGET+= -fno-short-emums
 endif
