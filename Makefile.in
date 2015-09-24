@@ -382,14 +382,8 @@ GCC_CONFIG_ARGS += --enable-version-specific-runtime-libs \
 
 ifneq ($(target_os),x86_64)
 GCC_CONFIG_ARGS += --disable-libstdc__-v3
-endif
-
-ifneq ($(target_os),x86_64)
-CFLAGS_FOR_TARGET+= -fno-short-enums -DTARGET_POSIX_IO
-CXXFLAGS_FOR_TARGET+= -fno-short-emums -DTARGET_POSIX_IO
-else
-CFLAGS_FOR_TARGET+= -DTARGET_POSIX_IO
-CXXFLAGS_FOR_TARGET+= -DTARGET_POSIX_IO
+CFLAGS_FOR_TARGET+= -fno-short-enums
+CXXFLAGS_FOR_TARGET+= -fno-short-emums
 endif
 
 ifeq ($(target_cpu),i686)
