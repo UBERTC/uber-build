@@ -378,7 +378,7 @@ GCC_CONFIG_ARGS += --enable-version-specific-runtime-libs \
 	--enable-threads --disable-nls --enable-target-optspace \
 	--disable-shared --disable-tls --disable-libitm \
 	--disable-werror --disable-libssp  --disable-plugin \
-	--disable-sjlj-exceptions 
+	--disable-sjlj-exceptions --disable-host-shared
 
 ifneq ($(target_os),x86_64)
 GCC_CONFIG_ARGS += --disable-libstdc__-v3
